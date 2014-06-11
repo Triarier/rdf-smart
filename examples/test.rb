@@ -19,7 +19,15 @@ module RDF
 end  
 
 
-s = RDF::SPARQL::Smart.new <<-
+s = RDF::SPARQL::Smart.new
+s.source << 'test.ttl'
+p s.sources # [ 'test.ttl' ]
+s.source << 'http://solo.wst.univie.ac.at/test.ttl'
+p s.sources # [ 'test.ttl', 'http://solo.wst.univie.ac.at/test.ttl' ]
+p s.namespaces # array of namespaces
+
+
+r = s.execute <<-
   PREFIX wst: <http://wst.univie.ac.at/>
   SELECT distinct ?person
   FROM <test.ttl>
@@ -27,14 +35,6 @@ s = RDF::SPARQL::Smart.new <<-
     ?person a wst:person.
   }
 end
-p s.data_sources # [ 'test.ttl' ]
-s.data_sources << 'http://solo.wst.univie.ac.at/test.ttl'
-p s.data_sources # [ 'test.ttl', 'http://solo.wst.univie.ac.at/test.ttl' ]
-p s.namespaces # array of namespaces
-p s.namespaces << RDF::SPARQL::Smart::Namespace.new('w', 'bla')
-
-
-r = s.execute
 
 r.count == r.length
 r.json

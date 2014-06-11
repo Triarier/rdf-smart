@@ -1,19 +1,4 @@
-#include <stdio.h>
-#include <string.h>
-#include <errno.h>
-#include <stdlib.h>
-#include <unistd.h>
-
-/* Rasqal includes */
-#include <rasqal.h>
-#define RASQAL_GOOD_CAST(t, v) (t)(v)
-#define RASQAL_BAD_CAST(t, v) (t)(v)
-
-int main(int argc, char *argv[]);
-
-#define MAX_QUERY_ERROR_REPORT_LEN 512
-
-static int print_graph_result(rasqal_query* rq,
+static int rssm_print_graph_result(rasqal_query* rq,
                               rasqal_query_results *results,
                               raptor_world* raptor_world_ptr,
                               const char* serializer_syntax_name, 
@@ -50,7 +35,7 @@ static int print_graph_result(rasqal_query* rq,
   return 0;
 }
 
-static int print_formatted_query_results(rasqal_world* world,
+static int rssm_print_formatted_query_results(rasqal_world* world,
                                          rasqal_query_results* results,
                                          raptor_world* raptor_world_ptr,
                                          const char* result_format_name,
@@ -77,7 +62,7 @@ static int print_formatted_query_results(rasqal_world* world,
 }
 
 
-static rasqal_query* roqet_init_query(rasqal_world *world, 
+static rasqal_query* rssm_roqet_init_query(rasqal_world *world, 
                                       const char* ql_name,
                                       const unsigned char* query_string,
                                       raptor_sequence* data_graphs)
@@ -117,7 +102,7 @@ static rasqal_query* roqet_init_query(rasqal_world *world,
   return rq;
 }
 
-int main(int argc, char *argv[]) { 
+static void rssm_execute(VALUE query, VALUE sources) { 
   unsigned char *query_string = (unsigned char*) "SELECT * WHERE { ?s ?p ?o }";
   rasqal_query *rq = NULL;
   rasqal_query_results *results;
@@ -239,3 +224,15 @@ int main(int argc, char *argv[]) {
 
   return (0);
 }
+
+VALUE rsm_RDF;
+VALUE rsm_Smart;
+
+void Init_rsm( void ) {
+  rsm_RDF  = rb_define_module( "RDF" );
+  rsm_Smart = rb_define_class_under( rsm_RDF, "Smart", rb_cObject);
+  rb_define_const(rsm_Smart, "VERSION", rb_str_new2(RSM_VERSION)); 
+
+  rb_define_singleton_method(rsm_Smart, "new", (VALUE(*)(ANYARGS))rsm_new, -1);
+}
+

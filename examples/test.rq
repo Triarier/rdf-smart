@@ -1,6 +1,6 @@
 PREFIX wst: <http://wst.univie.ac.at/>
 SELECT distinct ?person
-FROM <test.ttl>
 WHERE {
 ?person a wst:person.
 }
+FROM <test.ttl>
