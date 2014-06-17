@@ -1,3 +1,3 @@
-rdf-sparql-smart
+rdf-smart
 ================
 Will be great.
