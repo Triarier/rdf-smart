@@ -37,8 +37,6 @@
 #define RB_IO_T_FD(o) fileno(o->f)
 #endif
 
-#define RSM_VERSION  "0.0.99"
-
 RUBY_EXTERN VALUE rsm_RDF;
 RUBY_EXTERN VALUE rsm_Smart;
 

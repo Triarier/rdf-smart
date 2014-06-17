@@ -11,7 +11,7 @@ ECHO = $(ECHO1:0=@echo)
 
 #### Start of system configuration section. ####
 
-srcdir = .
+srcdir = ext
 topdir = /usr/include/ruby-1.9.1
 hdrdir = /usr/include/ruby-1.9.1
 arch_hdrdir = /usr/include/ruby-1.9.1/$(arch)
@@ -68,7 +68,7 @@ cflags   =  $(optflags) $(debugflags) $(warnflags)
 optflags = -O3
 debugflags = -ggdb
 warnflags = -Wall -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wimplicit-function-declaration
-CFLAGS   = -fPIC  -std=c99 -I/usr/include/rasqal -I/usr/include/raptor2  -g -Wall -g -O2 -fstack-protector --param=ssp-buffer-size=4 -Wformat -Werror=format-security -Wall -fno-strict-aliasing -fPIC $(ARCH_FLAG)
+CFLAGS   = -fPIC  -DRSM_VERSION=\"0.0.152\" -std=c99 -I/usr/include/rasqal -I/usr/include/raptor2  -g -Wall -g -O2 -fstack-protector --param=ssp-buffer-size=4 -Wformat -Werror=format-security -Wall -fno-strict-aliasing -fPIC $(ARCH_FLAG)
 INCFLAGS = -I. -I$(arch_hdrdir) -I$(hdrdir)/ruby/backward -I$(hdrdir) -I$(srcdir)
 DEFS     = 
 CPPFLAGS = -DRUBY_EXTCONF_H=\"$(RUBY_EXTCONF_H)\" -D_FORTIFY_SOURCE=2 $(DEFS) $(cppflags)
