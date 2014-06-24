@@ -1,3 +1,0 @@
-world = rasqal_new_world();
-rasqal_world_get_raptor(world);
-rasqal_world_set_log_handler(world,world,roqet_log_handler);
