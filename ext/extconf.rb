@@ -1,6 +1,6 @@
 require 'mkmf'
 
-spec = eval(File.read(File.dirname(__FILE__) + '/../rsm.gemspec'))
+spec = eval(File.read(File.dirname(__FILE__) + '/../rdf-smart.gemspec'))
 PKG_NAME="rdf/smart"
 
 $CFLAGS = '-g -Wall ' + $CFLAGS

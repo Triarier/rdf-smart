@@ -55,7 +55,6 @@ static int rsm_print_graph_result(rasqal_query* rq,
   
   return 0;
 }
-
 static void rsm_extract_namespaces(void* user_data, raptor_namespace *nspace) {
   VALUE *h = (VALUE *)user_data;
   char * tmp = (char *)raptor_namespace_get_prefix(nspace);
@@ -180,7 +179,9 @@ static rasqal_query* rsm_roqet_init_query(rasqal_world *world,
   }
   return rq;
 }
-
+/*
+ * This method gets all the namespaces
+ */
 VALUE rsm_namespaces(VALUE self) {
   rsm_obj *prsm_obj;
   int i;
@@ -204,7 +205,7 @@ VALUE rsm_execute(VALUE self, VALUE query) {
   rasqal_world *world;
   raptor_world* raptor_world_ptr = NULL;
   char* output;
-  size_t len;
+  size_t len = 0;
   int i;
   raptor_sequence* data_graphs = NULL;
   char* data_graph_parser_name = NULL;
@@ -216,107 +217,109 @@ VALUE rsm_execute(VALUE self, VALUE query) {
   Data_Get_Struct(self, rsm_obj, prsm_obj);
 
   world = rasqal_new_world();
-  if(!world || rasqal_world_open(world)) {
-    rb_raise(rb_eRuntimeError, "rasqal_world init failed");
-  }
-  raptor_world_ptr = rasqal_world_get_raptor(world);
+
+//  if(!world || rasqal_world_open(world)) {
+//    rb_raise(rb_eRuntimeError, "rasqal_world init failed");
+//  }
+  // raptor_world_ptr = rasqal_world_get_raptor(world);
   
-  /* #{{{ Data_Graphs*/
-  for (i = 0; i < RARRAY_LEN(prsm_obj->data_sources); i++) {
-    const char* data_source = RSTRING_PTR(RARRAY_PTR(prsm_obj->data_sources)[i]);
-    rasqal_data_graph *dg = NULL;
-    unsigned int type;
-
-    type = RASQAL_DATA_GRAPH_BACKGROUND;
-
-    if(!access((const char*)data_source, R_OK)) {
-      unsigned char* source_uri_string;
-      raptor_uri* source_uri;
-      raptor_uri* graph_name = NULL;
-
-      source_uri_string = raptor_uri_filename_to_uri_string((const char*)data_source);
-      source_uri = raptor_new_uri(raptor_world_ptr, source_uri_string);
-      raptor_free_memory(source_uri_string);
-
-      
-      if(source_uri)
-        dg = rasqal_new_data_graph_from_uri(world,
-                                            source_uri,
-                                            graph_name,
-                                            type,
-                                            NULL, data_graph_parser_name,
-                                            NULL);
-
-      if(source_uri)
-        raptor_free_uri(source_uri);
-    } else {
-      raptor_uri* source_uri;
-      raptor_uri* graph_name = NULL;
-
-      source_uri = raptor_new_uri(raptor_world_ptr,
-                                  (const unsigned char*)data_source);
-      
-      if(source_uri)
-        dg = rasqal_new_data_graph_from_uri(world,
-                                            source_uri,
-                                            graph_name,
-                                            type,
-                                            NULL, data_graph_parser_name,
-                                            NULL);
-
-      if(source_uri)
-        raptor_free_uri(source_uri);
-    }
-    
-    if(!dg) {
-      rb_raise(rb_eRuntimeError, "booboo");
-    }
-    
-    if(!data_graphs) {
-      data_graphs = raptor_new_sequence((raptor_data_free_handler)rasqal_free_data_graph,
-                                        NULL);
-
-      if(!data_graphs) {
-        rb_raise(rb_eRuntimeError, "Failed to create data graphs sequence");
-      }
-    }
-
-    raptor_sequence_push(data_graphs, dg);
-  }
-/* #}}} */
-
-  if (!(rq = rsm_roqet_init_query(world, "sparql", query_string,data_graphs)))
-    goto tidy_query;
-
-  results = rasqal_query_execute(rq);
-
-  if(!results) {
-    fprintf(stderr, "Query execution failed\n");
-    goto tidy_query;
-  }
-
-  if(rasqal_query_results_is_bindings(results) || rasqal_query_results_is_boolean(results)) {
-    rsm_print_formatted_query_results(world, results, raptor_world_ptr, "json", &output, &len);
-  } else if(rasqal_query_results_is_graph(results)) {
-    rsm_print_graph_result(rq, results, raptor_world_ptr, "json", &output, &len);
-  } else {
-    rb_raise(rb_eRuntimeError, "Query returned unknown result format");
-  }
-
-  rasqal_free_query_results(results);
-  
-  tidy_query:
-    if(data_graphs) raptor_free_sequence(data_graphs);
-    if(rq) rasqal_free_query(rq);
+//  /* #{{{ Data_Graphs*/
+//  for (i = 0; i < RARRAY_LEN(prsm_obj->data_sources); i++) {
+//    const char* data_source = RSTRING_PTR(RARRAY_PTR(prsm_obj->data_sources)[i]);
+//    rasqal_data_graph *dg = NULL;
+//    unsigned int type;
+//
+//    type = RASQAL_DATA_GRAPH_BACKGROUND;
+//
+//    if(!access((const char*)data_source, R_OK)) {
+//      unsigned char* source_uri_string;
+//      raptor_uri* source_uri;
+//      raptor_uri* graph_name = NULL;
+//
+//      source_uri_string = raptor_uri_filename_to_uri_string((const char*)data_source);
+//      source_uri = raptor_new_uri(raptor_world_ptr, source_uri_string);
+//      raptor_free_memory(source_uri_string);
+//
+//      
+//      if(source_uri)
+//        dg = rasqal_new_data_graph_from_uri(world,
+//                                            source_uri,
+//                                            graph_name,
+//                                            type,
+//                                            NULL, data_graph_parser_name,
+//                                            NULL);
+//
+//      if(source_uri)
+//        raptor_free_uri(source_uri);
+//    } else {
+//      raptor_uri* source_uri;
+//      raptor_uri* graph_name = NULL;
+//
+//      source_uri = raptor_new_uri(raptor_world_ptr,
+//                                  (const unsigned char*)data_source);
+//      
+//      if(source_uri)
+//        dg = rasqal_new_data_graph_from_uri(world,
+//                                            source_uri,
+//                                            graph_name,
+//                                            type,
+//                                            NULL, data_graph_parser_name,
+//                                            NULL);
+//
+//      if(source_uri)
+//        raptor_free_uri(source_uri);
+//    }
+//    
+//    if(!dg) {
+//      rb_raise(rb_eRuntimeError, "booboo");
+//    }
+//    
+//    if(!data_graphs) {
+//      data_graphs = raptor_new_sequence((raptor_data_free_handler)rasqal_free_data_graph,
+//                                        NULL);
+//
+//      if(!data_graphs) {
+//        rb_raise(rb_eRuntimeError, "Failed to create data graphs sequence");
+//      }
+//    }
+//
+//    raptor_sequence_push(data_graphs, dg);
+//  }
+///* #}}} */
+//
+//  if (!(rq = rsm_roqet_init_query(world, "sparql", query_string,data_graphs)))
+//    goto tidy_query;
+//
+//  results = rasqal_query_execute(rq);
+//
+//  if(!results) {
+//    fprintf(stderr, "Query execution failed\n");
+//    goto tidy_query;
+//  }
+//
+//  if(rasqal_query_results_is_bindings(results) || rasqal_query_results_is_boolean(results)) {
+//    //rsm_print_formatted_query_results(world, results, raptor_world_ptr, "json", &output, &len);
+//  } else if(rasqal_query_results_is_graph(results)) {
+//    //rsm_print_graph_result(rq, results, raptor_world_ptr, "json", &output, &len);
+//  } else {
+//    rb_raise(rb_eRuntimeError, "Query returned unknown result format");
+//  }
+//
+//  rasqal_free_query_results(results);
+//  
+//  tidy_query:
+//    if(data_graphs) raptor_free_sequence(data_graphs);
+//    if(rq) rasqal_free_query(rq);
     rasqal_free_world(world);
-
-    routput = rb_str_new(output,len);
-    enc = rb_enc_find_index("UTF-8");
-    rb_enc_associate_index(routput, enc);
-
-    free(output);
-
-    return routput;
+//
+//    //routput = rb_str_new(output,len);
+//    //enc = rb_enc_find_index("UTF-8");
+//    //rb_enc_associate_index(routput, enc);
+//
+//    free(output);
+//
+//    //return routput;
+    return Qnil;
 }
 
 VALUE rsm_data_sources(VALUE self) {
