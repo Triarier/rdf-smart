@@ -204,7 +204,7 @@ VALUE rsm_execute(VALUE self, VALUE query) {
   rasqal_query_results *results;
   rasqal_world *world;
   raptor_world* raptor_world_ptr = NULL;
-  char* output;
+  char* output = NULL;
   size_t len = 0;
   int i;
   raptor_sequence* data_graphs = NULL;
@@ -306,7 +306,7 @@ VALUE rsm_execute(VALUE self, VALUE query) {
   }
 
   rasqal_free_query_results(results);
-  
+   
   tidy_query:
     if(data_graphs) raptor_free_sequence(data_graphs);
     if(rq) rasqal_free_query(rq);
@@ -316,7 +316,7 @@ VALUE rsm_execute(VALUE self, VALUE query) {
     enc = rb_enc_find_index("UTF-8");
     rb_enc_associate_index(routput, enc);
 
-    free(output);
+    if(output) free(output);
 
     return routput;
 }
