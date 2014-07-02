@@ -1,9 +1,8 @@
 #include "rsm.h"
 
-/* -- */
-// ***********************************************************************************
+// ************************************************************************************
 // GC
-// ***********************************************************************************
+// ************************************************************************************
 void rsm_free(rsm_obj *prsm_obj) {
   if (prsm_obj != NULL) {
     free(prsm_obj);
@@ -321,6 +320,11 @@ VALUE rsm_execute(VALUE self, VALUE query) {
     return routput;
 }
 
+/*
+ * [Document-method: +data_sources+]
+ *
+ * Method description here.
+ */
 VALUE rsm_data_sources(VALUE self) {
   rsm_obj *prsm_obj;
   Data_Get_Struct(self, rsm_obj, prsm_obj);
@@ -344,11 +348,14 @@ VALUE rsm_Smart;
 void Init_smart( void ) {
   rsm_RDF  = rb_define_module( "RDF" );
   rsm_Smart = rb_define_class_under( rsm_RDF, "Smart", rb_cObject);
-  rb_define_const(rsm_Smart, "VERSION", rb_str_new2(RSM_VERSION)); 
-
   rb_define_singleton_method(rsm_Smart, "new", (VALUE(*)(ANYARGS))rsm_new, -1);
   rb_define_method(rsm_Smart, "data_sources", (VALUE(*)(ANYARGS))rsm_data_sources, 0);
   rb_define_method(rsm_Smart, "namespaces", (VALUE(*)(ANYARGS))rsm_namespaces, 0);
   rb_define_private_method(rsm_Smart, "__execute", (VALUE(*)(ANYARGS))rsm_execute, 1);
+  /*
+   * Equals the current version number 
+   */
+  rb_define_const(rsm_Smart, "VERSION", rb_str_new2(RSM_VERSION)); 
+
 }
 

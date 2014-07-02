@@ -1,6 +1,7 @@
-require File.dirname(__FILE__)+ '/../../ext/smart'
+require File.dirname(__FILE__) + '/../../ext/smart'
 require 'json'
 require 'pp'
+
 
 ##
 # Main Module
@@ -9,7 +10,7 @@ module RDF
   # Creates a RDF::Smart Object. 
   class Smart
     ##
-    # Exetuces a +query+. +query+ is a string.
+    # Executes a +query+. +query+ is a string.
     #
     # An Error is raised if a +data_source+ does not exist
     ##
@@ -72,6 +73,12 @@ module RDF
         end
       end
       res #}}}
+    end
+    ##
+    # Returns the currently used version of rdf-smart.
+    ##
+    def version
+      VERSION
     end
   end
 end

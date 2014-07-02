@@ -16,7 +16,8 @@ end
 
 desc "Compiling library"
 task :compile => :config do
-  Dir.chdir('ext')  
+  Dir.chdir('ext')
+  system "touch *"
   system "make"
   Dir.chdir(File.dirname(__FILE__))  
 end
@@ -36,4 +37,8 @@ task :push => [:config,:compile,:gem] do
   system "gem push pkg/rdf-smart-#{spec.version.to_s}.gem"
 end
 
-
+desc "Generate Documentation"
+RDoc::Task.new do |rdoc|
+#  rdoc.main ="README.rdoc"
+  rdoc.rdoc_files.include("ext/*.c","ext/*.h","lib/**/*")
+end
