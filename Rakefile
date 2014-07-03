@@ -17,7 +17,7 @@ end
 desc "Compiling library"
 task :compile => :config do
   Dir.chdir('ext')
-  system "touch *"
+  system "touch *.c"
   system "make"
   Dir.chdir(File.dirname(__FILE__))  
 end

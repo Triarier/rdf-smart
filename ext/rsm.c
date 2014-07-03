@@ -1,5 +1,6 @@
 #include "rsm.h"
 
+/* -- */
 // ************************************************************************************
 // GC
 // ************************************************************************************
@@ -179,7 +180,7 @@ static rasqal_query* rsm_roqet_init_query(rasqal_world *world,
   return rq;
 }
 /*
- * This method gets all the namespaces
+ * This method returns a hash containing all key value pairs of +namespaces+ found in +data_sources+
  */
 VALUE rsm_namespaces(VALUE self) {
   rsm_obj *prsm_obj;
@@ -321,9 +322,7 @@ VALUE rsm_execute(VALUE self, VALUE query) {
 }
 
 /*
- * [Document-method: +data_sources+]
- *
- * Method description here.
+ * Returns an array, containing all +data_sources+
  */
 VALUE rsm_data_sources(VALUE self) {
   rsm_obj *prsm_obj;
@@ -331,31 +330,54 @@ VALUE rsm_data_sources(VALUE self) {
   return(prsm_obj->data_sources);
 }
 
-VALUE rsm_new(int argc, VALUE *argv, VALUE class) {
-  int i;
+VALUE allocate(VALUE class) {
   rsm_obj *prsm_obj = (rsm_obj *)malloc(sizeof(rsm_obj));
+  return(Data_Wrap_Struct(class, rsm_mark, rsm_free, prsm_obj));
+}
+
+/*
+ * Creates a new RDF::Smart object.
+ *
+ * Parameter +args+ can be zero to n strings of filenames.
+ *
+ * Parameter +args+ will be saved as +data_sources+. 
+ */
+VALUE rsm_initialize(int argc, VALUE *argv, VALUE self) {
+  int i;
+  rsm_obj *prsm_obj;
+  Data_Get_Struct(self, rsm_obj, prsm_obj);
   prsm_obj->data_sources = rb_ary_new();
   for (i=0; i<argc; i++) {
     if (TYPE(argv[i]) == T_STRING)  
       rb_ary_push(prsm_obj->data_sources,argv[i]);
   }
-  return(Data_Wrap_Struct(rsm_Smart, rsm_mark, rsm_free, prsm_obj));
+
+  return self;
 }
 
 VALUE rsm_RDF;
 VALUE rsm_Smart;
 
-void Init_smart( void ) {
+void Init_smart(void) {
+  /*
+   * Our module
+   */
   rsm_RDF  = rb_define_module( "RDF" );
+  /*
+   * Our class, conatins the main methods.
+   */
   rsm_Smart = rb_define_class_under( rsm_RDF, "Smart", rb_cObject);
-  rb_define_singleton_method(rsm_Smart, "new", (VALUE(*)(ANYARGS))rsm_new, -1);
-  rb_define_method(rsm_Smart, "data_sources", (VALUE(*)(ANYARGS))rsm_data_sources, 0);
-  rb_define_method(rsm_Smart, "namespaces", (VALUE(*)(ANYARGS))rsm_namespaces, 0);
-  rb_define_private_method(rsm_Smart, "__execute", (VALUE(*)(ANYARGS))rsm_execute, 1);
+  rsm_RDF = rsm_RDF; 
+  rsm_Smart = rsm_Smart; 
   /*
    * Equals the current version number 
    */
   rb_define_const(rsm_Smart, "VERSION", rb_str_new2(RSM_VERSION)); 
+  rb_define_alloc_func(      rsm_Smart, allocate);
+  rb_define_method(          rsm_Smart, "initialize",   rsm_initialize,   -1);
+  rb_define_method(          rsm_Smart, "data_sources", rsm_data_sources,  0);
+  rb_define_method(          rsm_Smart, "namespaces",   rsm_namespaces,    0);
+  rb_define_private_method(  rsm_Smart, "__execute",    rsm_execute,       1);
 
 }
 

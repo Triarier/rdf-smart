@@ -6,7 +6,6 @@ x = RDF::Smart.new('test.ttl')
 
 # Prints data_sources -> ['test.ttl']
 pp x.data_sources 
-
 # Add new data_sources 
 x.data_sources << 'mh3.ttl'
 

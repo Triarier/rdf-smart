@@ -37,8 +37,8 @@
 #define RB_IO_T_FD(o) fileno(o->f)
 #endif
 
-RUBY_EXTERN VALUE rsm_RDF;
-RUBY_EXTERN VALUE rsm_Smart;
+extern VALUE rsm_RDF;
+extern VALUE rsm_Smart;
 
 typedef struct rsm_obj {
   VALUE data_sources;

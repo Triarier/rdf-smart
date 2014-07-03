@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = 'rdf-smart'
-  s.version = '0.0.160'
+  s.version = '0.0.162'
   s.date = '2014-06-17'
   s.summary ="RDF.rb segfaults. A lot. We don't. RDF.rb has lots of features. We don't."
   s.description ="Minimal sparql support for ruby. Basically the roqet tool from http://librdf.org, with always guessing input type, and always json output."
