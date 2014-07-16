@@ -7,11 +7,11 @@ $CFLAGS = '-g -Wall ' + $CFLAGS
 $LIBPATH.push(RbConfig::CONFIG['libdir'])
 
 unless have_library("raptor2")
-  pp "Library raptor2 not found"
+  puts "Library raptor2 not found"
   exit 1
 end
 unless have_library("rasqal")
-  pp "Library rasqal not found"
+  puts "Library rasqal not found"
   exit 1
 end
 $CFLAGS = ' -DRSM_VERSION=\\"' + spec.version.to_s + '\\" -std=c99 ' + `rasqal-config --cflags`.chomp + $CFLAGS

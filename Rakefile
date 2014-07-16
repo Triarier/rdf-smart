@@ -1,5 +1,6 @@
 require 'rubygems'                                                                                       
 require 'rake/clean'
+require 'rake/testtask'
 require 'rubygems/package_task'
 require 'rdoc/rdoc'
 
@@ -41,4 +42,17 @@ desc "Generate Documentation"
 RDoc::Task.new do |rdoc|
 #  rdoc.main ="README.rdoc"
   rdoc.rdoc_files.include("ext/*.c","ext/*.h","lib/**/*")
+end
+
+desc "Generate RI"
+Rake::RDocTask.new(:ri) do |rd|
+  rd.rdoc_dir = "doc/ri"
+  rd.options << "--ri-system"
+  rd.rdoc_files.include("ext/*.c","ext/*.h","lib/**/*")
+end
+
+desc "Testing"
+Rake::TestTask.new do |t|
+  t.test_files = FileList['test/*_test.rb']
+  t.verbose = true
 end

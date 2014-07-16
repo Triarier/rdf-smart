@@ -1,5 +1,5 @@
 #!/usr/bin/ruby
-require '../lib/rdf/smart'
+require File.dirname(__FILE__) + '/../lib/rdf/smart'
 
 # Initialize new RDF::Smart Object with mh3.ttl as data_source
 x = RDF::Smart.new('mh3.ttl')

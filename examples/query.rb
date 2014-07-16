@@ -1,5 +1,5 @@
 #!/usr/bin/ruby
-require '../lib/rdf/smart'
+require File.dirname(__FILE__) + '/../lib/rdf/smart'
 require 'pp'
 
 # Initialize new RDF::Smart Object with test.ttl as data_sources
